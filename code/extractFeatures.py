@@ -13,13 +13,13 @@ def extractFeatures(tweet):
         features['contains(%s)' % word] = (word in tweet_words)
     return features
 
-inpTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
+trainingTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
 stopWords = getStopWordList('code/stopwords.txt')
 classifierDump = 'classifierDumpNB'
 featureList = []
 
 tweets = []
-for row in inpTweets:
+for row in trainingTweets:
     sentiment = row[2]
     tweet = row[3]
     if tweet == 'Not Available':
@@ -55,10 +55,10 @@ else:
     pickle.dump(NBClassifier, classifierDumpFile)
     classifierDumpFile.close()
 
-inpTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
+trainingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
 
 testTweets = []
-for row in inpTweets:
+for row in trainingTweets:
     tweet = row[3]
     if tweet == 'Not Available':
         continue

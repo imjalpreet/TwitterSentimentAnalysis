@@ -70,13 +70,13 @@ def getSVMFeatureVector(tweets, featureList):
         featureVector.append(values)
     return featureVector
 
-inpTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
+trainingTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
 stopWords = getStopWordList('code/stopwords.txt')
 classifierDumpFile = 'classifierDump'
 featureList = []
 
 tweets = []
-for row in inpTweets:
+for row in trainingTweets:
     sentiment = row[2]
     tweet = row[3]
     if tweet == 'Not Available':
@@ -114,9 +114,9 @@ else:
 
 testTweets = []
 
-inpTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
+trainingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
 
-for row in inpTweets:
+for row in trainingTweets:
     sentiment = row[2]
     tweet = row[3]
     if tweet == 'Not Available':

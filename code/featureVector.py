@@ -24,24 +24,24 @@ def getFeatureVector(tweet, stopWords):
 
     words = tweet.split()
 
-    for w in words:
-        w = replaceTwoOrMore(w)
+    for word in words:
+        word = replaceTwoOrMore(word)
         """
         strip punctuation
         """
-        w = w.strip('\'"?,.')
+        word = word.strip('\'"?,.')
 
         """
         check if the word stats with an alphabet
         """
-        checkAlpha = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", w)
+        checkAlpha = re.search(r"^[a-zA-Z][a-zA-Z0-9]*$", word)
 
         """
         Remove stopWords
         """
-        if w in stopWords or checkAlpha is None:
+        if word in stopWords or checkAlpha is None:
             continue
         else:
-            featureVector.append(w.lower())
+            featureVector.append(word.lower())
 
     return featureVector
