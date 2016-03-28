@@ -1,0 +1,6 @@
+fi = open('data/testing.tsv', 'rb')
+data = fi.read()
+fi.close()
+fo = open('data/test.tsv', 'wb')
+fo.write(data.replace('\x00', ''))
+fo.close()
