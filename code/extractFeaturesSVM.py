@@ -130,29 +130,17 @@ Test the classifier
 """
 test_feature_vector = getSVMFeatureVector(testTweets, featureList)
 
+favourable = []
+
+for (t, l) in testTweets:
+    if l == 'positive':
+        favourable.append(0)
+    elif l == 'negative':
+        favourable.append(1)
+    else:
+        favourable.append(2)
+
 """
 p_labels contains the final labeling result
 """
-p_labels, p_accs, p_vals = svm_predict([0] * len(test_feature_vector),test_feature_vector, classifier)
-
-count = 0
-total, correct, wrong = 0, 0, 0
-accuracy = 0.0
-for (t, l) in tweets:
-    label = p_labels[count]
-    if label == 0:
-        label = 'positive'
-    elif label == 1:
-        label = 'negative'
-    elif label == 2:
-        label = 'neutral'
-
-    if label == l:
-        correct += 1
-    else:
-        wrong += 1
-    total += 1
-    count += 1
-
-accuracy = (float(correct)/total)*100
-print accuracy
+p_labels, p_accs, p_vals = svm_predict(favourable, test_feature_vector, classifier)
