@@ -49,7 +49,19 @@ def getAcronymList(acronymListFP):
     fp.close()
     return acronymList
 
-def getFeatureVector(tweet, stopWords, acronyms, emoticons):
+def getNegativeWords(negativeListFP):
+    negativeWords = []
+
+    fp = open(negativeListFP, 'r')
+    line = fp.readline()
+    while line:
+        word = line.strip()
+        negativeWords.append(word)
+        line = fp.readline()
+    fp.close()
+    return negativeWords
+
+def getFeatureVector(tweet, stopWords, acronyms, emoticons, negativeWords):
 
     featureVector = []
 
@@ -64,6 +76,8 @@ def getFeatureVector(tweet, stopWords, acronyms, emoticons):
         elif emoticons.has_key(words[word]):
             words[word] = 'emo' + emoticons[words[word]]
             finalWords.append(words[word])
+        elif words[word] in negativeWords:
+            finalWords.append("n-1")
         else:
             finalWords.append(words[word])
 

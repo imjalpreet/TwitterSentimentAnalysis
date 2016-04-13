@@ -1,10 +1,10 @@
 __author__ = 'imjalpreet'
 
 import csv
-import svm
+import sys
 from svmutil import *
 from preProcess import preProcessTweet
-from featureVector import getFeatureVector, getStopWordList, getAcronymList, getEmoticonList
+from featureVector import getFeatureVector, getStopWordList, getAcronymList, getEmoticonList, getNegativeWords
 
 def getSVMFeatureVectorAndLabels(tweets, featureList):
     sortedFeatures = sorted(featureList)
@@ -74,6 +74,7 @@ trainingTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
 stopWords = getStopWordList('code/stopwords.txt')
 acronyms = getAcronymList('data/InternetSlangAcronyms.txt')
 emoticons = getEmoticonList('data/EmoticonSentimentLexicon.txt')
+negativeWords = getNegativeWords('data/negativeWords.txt')
 classifierDumpFile = 'classifierDump'
 featureList = []
 
@@ -91,7 +92,7 @@ for row in trainingTweets:
     if tweet == 'Not Available':
         continue
     processedTweet = preProcessTweet(tweet)
-    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons)
+    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons, negativeWords)
     featureList.extend(featureVector)
     tweets.append((featureVector, sentiment))
 
@@ -123,40 +124,71 @@ else:
 
 testTweets = []
 
-testingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
+if sys.argv[1] == 'file':
+    testingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
 
-for row in testingTweets:
-    sentiment = row[2]
+    for row in testingTweets:
+        sentiment = row[2]
+
+        """
+        Un-comment for only positive and negative tweets
+        """
+        # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
+        #     continue
+
+        tweet = row[3]
+        if tweet == 'Not Available':
+            continue
+        processedTweet = preProcessTweet(tweet)
+        featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons, negativeWords)
+        testTweets.append((featureVector, sentiment))
 
     """
-    Un-comment for only positive and negative tweets
+    Test the classifier
     """
-    # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
-    #     continue
+    test_feature_vector = getSVMFeatureVector(testTweets, featureList)
 
-    tweet = row[3]
-    if tweet == 'Not Available':
-        continue
-    processedTweet = preProcessTweet(tweet)
-    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons)
-    testTweets.append((featureVector, sentiment))
+    favourable = []
 
-"""
-Test the classifier
-"""
-test_feature_vector = getSVMFeatureVector(testTweets, featureList)
+    for (t, l) in testTweets:
+        if l == 'positive':
+            favourable.append(0)
+        elif l == 'negative':
+            favourable.append(1)
+        else:
+            favourable.append(2)
 
-favourable = []
+    """
+    p_labels contains the final labeling result
+    """
+    p_labels, p_accs, p_vals = svm_predict(favourable, test_feature_vector, classifier)
 
-for (t, l) in testTweets:
-    if l == 'positive':
-        favourable.append(0)
-    elif l == 'negative':
-        favourable.append(1)
-    else:
-        favourable.append(2)
+elif sys.argv[1] == 'input':
+    testTweet = raw_input("Please enter the Tweet: ")
+    while testTweet != 'Exit':
+        sentiment = raw_input("Please enter the expected sentiment: ")
+        processedTweet = preProcessTweet(testTweet)
+        featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons, negativeWords)
+        testTweets.append((featureVector, sentiment))
 
-"""
-p_labels contains the final labeling result
-"""
-p_labels, p_accs, p_vals = svm_predict(favourable, test_feature_vector, classifier)
+        """
+        Test the classifier
+        """
+        test_feature_vector = getSVMFeatureVector(testTweets, featureList)
+
+        favourable = []
+
+        for (t, l) in testTweets:
+            if l == 'positive':
+                favourable.append(0)
+            elif l == 'negative':
+                favourable.append(1)
+            else:
+                favourable.append(2)
+
+        """
+        p_labels contains the final labeling result
+        """
+        p_labels, p_accs, p_vals = svm_predict(favourable, test_feature_vector, classifier)
+
+        testTweet = raw_input("Please enter the Tweet: ")
