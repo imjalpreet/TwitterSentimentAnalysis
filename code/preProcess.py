@@ -9,12 +9,12 @@ def preProcessTweet(tweet):
     """
     Convert www.* or https?://* to ||U||
     """
-    tweet = re.sub('((www\.[^\s]+)|(https?://[^\s]+))','||U||',tweet)
+    tweet = re.sub('((www\.[^\s]+)|(https?://[^\s]+))', '||U||', tweet)
 
     """
     Convert @username to ||T||
     """
-    tweet = re.sub('@[^\s]+','||T||',tweet)
+    tweet = re.sub('@[^\s]+', '||T||', tweet)
 
     """
     Replace #word with word
@@ -25,10 +25,5 @@ def preProcessTweet(tweet):
     Remove additional white spaces
     """
     tweet = re.sub('[\s]+', ' ', tweet)
-
-    """
-    trim
-    """
-    tweet = tweet.strip('\'"')
 
     return tweet

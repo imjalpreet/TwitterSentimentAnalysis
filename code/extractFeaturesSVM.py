@@ -4,7 +4,7 @@ import csv
 import svm
 from svmutil import *
 from preProcess import preProcessTweet
-from featureVector import getFeatureVector, getStopWordList
+from featureVector import getFeatureVector, getStopWordList, getAcronymList, getEmoticonList
 
 def getSVMFeatureVectorAndLabels(tweets, featureList):
     sortedFeatures = sorted(featureList)
@@ -37,7 +37,7 @@ def getSVMFeatureVectorAndLabels(tweets, featureList):
             label = 0
         elif(tweetSentiment == 'negative'):
             label = 1
-        elif(tweetSentiment == 'neutral'):
+        elif(tweetSentiment == 'neutral' or tweetSentiment == 'objective-OR-neutral' or tweetSentiment == 'objective'):
             label = 2
         labels.append(label)
 
@@ -72,17 +72,26 @@ def getSVMFeatureVector(tweets, featureList):
 
 trainingTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
 stopWords = getStopWordList('code/stopwords.txt')
+acronyms = getAcronymList('data/InternetSlangAcronyms.txt')
+emoticons = getEmoticonList('data/EmoticonSentimentLexicon.txt')
 classifierDumpFile = 'classifierDump'
 featureList = []
 
 tweets = []
 for row in trainingTweets:
     sentiment = row[2]
+
+    """
+    Un-comment for only positive and negative tweets
+    """
+    # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
+    #     continue
+
     tweet = row[3]
     if tweet == 'Not Available':
         continue
     processedTweet = preProcessTweet(tweet)
-    featureVector = getFeatureVector(processedTweet, stopWords)
+    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons)
     featureList.extend(featureVector)
     tweets.append((featureVector, sentiment))
 
@@ -114,15 +123,22 @@ else:
 
 testTweets = []
 
-trainingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
+testingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
 
-for row in trainingTweets:
+for row in testingTweets:
     sentiment = row[2]
+
+    """
+    Un-comment for only positive and negative tweets
+    """
+    # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
+    #     continue
+
     tweet = row[3]
     if tweet == 'Not Available':
         continue
     processedTweet = preProcessTweet(tweet)
-    featureVector = getFeatureVector(processedTweet, stopWords)
+    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons)
     testTweets.append((featureVector, sentiment))
 
 """
