@@ -77,7 +77,7 @@ def getFeatureVector(tweet, stopWords, acronyms, emoticons, negativeWords):
             words[word] = 'emo' + emoticons[words[word]]
             finalWords.append(words[word])
         elif words[word] in negativeWords:
-            finalWords.append("n-1")
+            finalWords.append("negative")
         else:
             finalWords.append(words[word])
 
