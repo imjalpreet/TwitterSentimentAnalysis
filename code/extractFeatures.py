@@ -4,7 +4,7 @@ import csv
 import pickle
 import nltk
 from preProcess import preProcessTweet
-from featureVector import getFeatureVector, getStopWordList
+from featureVector import getFeatureVector, getStopWordList, getAcronymList, getEmoticonList
 
 def extractFeatures(tweet):
     tweet_words = set(tweet)
@@ -15,17 +15,26 @@ def extractFeatures(tweet):
 
 trainingTweets = csv.reader(open('data/training.tsv', 'rb'), delimiter='\t')
 stopWords = getStopWordList('code/stopwords.txt')
+acronyms = getAcronymList('data/InternetSlangAcronyms.txt')
+emoticons = getEmoticonList('data/EmoticonSentimentLexicon.txt')
 classifierDump = 'classifierDumpNB'
 featureList = []
 
 tweets = []
 for row in trainingTweets:
     sentiment = row[2]
+
+    """
+    Un-comment for only positive and negative tweets
+    """
+    # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
+    #     continue
+
     tweet = row[3]
     if tweet == 'Not Available':
         continue
     processedTweet = preProcessTweet(tweet)
-    featureVector = getFeatureVector(processedTweet, stopWords)
+    featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons)
     featureList.extend(featureVector)
     tweets.append((featureVector, sentiment))
 
@@ -55,10 +64,18 @@ else:
     pickle.dump(NBClassifier, classifierDumpFile)
     classifierDumpFile.close()
 
-trainingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
+testingTweets = csv.reader(open('data/test.tsv', 'rb'), delimiter='\t')
 
 testTweets = []
-for row in trainingTweets:
+for row in testingTweets:
+    sentiment = row[2]
+
+    """
+    Un-comment for only positive and negative tweets
+    """
+    # if(sentiment == 'neutral' or sentiment == 'objective-OR-neutral' or sentiment == 'objective'):
+    #     continue
+
     tweet = row[3]
     if tweet == 'Not Available':
         continue
@@ -71,7 +88,7 @@ Test the Classifier
 correct = 0
 count = 0
 for (testTweet, l) in testTweets:
-    label = NBClassifier.classify(extractFeatures(getFeatureVector(testTweet, stopWords)))
+    label = NBClassifier.classify(extractFeatures(getFeatureVector(testTweet, stopWords, acronyms, emoticons)))
     if label == l:
         correct += 1
     count += 1
