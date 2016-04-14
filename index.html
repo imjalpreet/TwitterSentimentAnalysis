@@ -88,6 +88,94 @@
 <a id="approachflow" class="anchor" href="#approachflow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Approach/Flow</h2>
 
 <p><img src="https://s28.postimg.org/z0jybjwyl/flow.png" alt="Flow"></p>
+
+<h3>
+<a id="download-tweets" class="anchor" href="#download-tweets" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Download Tweets</h3>
+
+<p>The tweets are downloaded using the Twitter API.</p>
+
+<h3>
+<a id="parsing" class="anchor" href="#parsing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parsing</h3>
+
+<ul>
+<li>We have totally 9684 tweets for training the algorithm and  8987 as testing tweets.​</li>
+<li>Out of these tweets, few tweets are incomplete which are not useful.</li>
+<li>We removed those tweets and updated the data set.​</li>
+</ul>
+
+<h3>
+<a id="tokenizing" class="anchor" href="#tokenizing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tokenizing</h3>
+
+<ul>
+<li>We didn't use ARK Tokenizer for tokenizing the tweets.​</li>
+<li>Instead, we coded the tokenizer following the steps given in the paper "Sentiment Analysis of Twitter Data" by Apoorv Agarwal et al.​</li>
+<li>So after parsing the original tweets will be processed by above steps and will be written to separate file which will be used in later stage.</li>
+</ul>
+
+<h3>
+<a id="preprocessing" class="anchor" href="#preprocessing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Preprocessing</h3>
+
+<p><strong>Steps involved in pre-processing</strong>:</p>
+
+<ul>
+<li>Replacing emoticons with weights without disturbing it's polarity.</li>
+<li>Replacing usernames, URLs with symbols like ||T||, ||U||.</li>
+<li>Replacing words with more than 3 continuous repeating characters with only 3 occurrence. ​</li>
+<li>Removing all the stop words and punctuation.</li>
+<li>Replacing all hashtags with the name in it.</li>
+<li>Replacing all the abbreviations with their full-forms.</li>
+</ul>
+
+<h3>
+<a id="feature-vectors" class="anchor" href="#feature-vectors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feature Vectors</h3>
+
+<ul>
+<li>With the processed dataset, we created feature vectors.​</li>
+<li>The basic feature that was considered was of unigrams.​</li>
+<li>A list of all unique unigrams(tokenized words) across the training set was constructed and it formed the feature vector for all the tweets.​</li>
+</ul>
+
+<h3>
+<a id="enhancing-feature-vectors" class="anchor" href="#enhancing-feature-vectors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enhancing Feature Vectors​</h3>
+
+<ul>
+<li>To improve the efficiency of the algorithm, we have added few more features to the existing one.​</li>
+<li>In addition to the unique unigrams, few features like​ the following were also added
+
+<ul>
+<li>Count of hashtags.</li>
+<li>Bigrams.</li>
+<li>Trigrams.</li>
+<li>Count of emoticons.</li>
+<li>Count of Negative words.</li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="svm" class="anchor" href="#svm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SVM</h3>
+
+<ul>
+<li>The Feature Vector was written into a file in the format expected by libsvm classifier.</li>
+<li>A SVM Classifier was used and trained with the training file as input and the classifier is built.​</li>
+<li>That classifier is used to predict the polarity of tweets in testing file.</li>
+</ul>
+
+<hr>
+
+<h2>
+<a id="results" class="anchor" href="#results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Results</h2>
+
+<p><img src="https://s28.postimg.org/61caiaop9/Results.jpg" alt="Results"></p>
+
+<hr>
+
+<h2>
+<a id="tags" class="anchor" href="#tags" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tags</h2>
+
+<p><code>Information Retrieval and Extraction Course</code> <code>IIIT-H</code> <code>Major Project</code><br>
+<code>Sentiment Analysis</code> <code>Social Network</code> <code>Natural Language Processing</code><br>
+<code>Twitter</code> <code>Support Vector Machine</code> <code>Naive Bayes</code> <code>Text Analysis</code> </p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/imjalpreet">imjalpreet</a></p>
