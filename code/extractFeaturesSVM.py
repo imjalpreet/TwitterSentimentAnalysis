@@ -91,8 +91,10 @@ for row in trainingTweets:
     tweet = row[3]
     if tweet == 'Not Available':
         continue
+    numberOfHashTags = tweet.count('#')
     processedTweet = preProcessTweet(tweet)
     featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons, negativeWords)
+    featureVector.append('hash'+str(numberOfHashTags))
     featureList.extend(featureVector)
     tweets.append((featureVector, sentiment))
 
@@ -139,8 +141,10 @@ if sys.argv[1] == 'file':
         tweet = row[3]
         if tweet == 'Not Available':
             continue
+        numberOfHashTags = tweet.count('#')
         processedTweet = preProcessTweet(tweet)
         featureVector = getFeatureVector(processedTweet, stopWords, acronyms, emoticons, negativeWords)
+        featureVector.append('hash'+str(numberOfHashTags))
         testTweets.append((featureVector, sentiment))
 
     """
